@@ -50,15 +50,15 @@ function Projects() {
     return (
         <section className="section">
             <h2>My Projects</h2>
-            
+
             {loading && <Spinner />}
             {error && <ErrorMessage message={error} />}
             {!loading && !error && (
                 <div className="details" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
                     {repos.map((repo) => (
-                        <div key={repo.id} style={{ 
-                            padding: "20px", 
-                            border: "1px solid #ddd", 
+                        <div key={repo.id} style={{
+                            padding: "20px",
+                            border: "1px solid #ddd",
                             borderRadius: "8px",
                             boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
                             backgroundColor: "#fff"
@@ -71,10 +71,12 @@ function Projects() {
                             <p style={{ color: '#586069', fontSize: '14px', marginBottom: '15px' }}>
                                 {repo.description || 'No description available.'}
                             </p>
+                            {/*  
                             <div style={{ display: 'flex', gap: '15px', fontSize: '12px', color: '#586069' }}>
                                 {repo.language && <span>🟡 {repo.language}</span>}
-                                <span>⭐ {repo.stargazers_count}</span>
+                                    <span>⭐ {repo.stargazers_count}</span>
                             </div>
+                            */}
                         </div>
                     ))}
                 </div>
