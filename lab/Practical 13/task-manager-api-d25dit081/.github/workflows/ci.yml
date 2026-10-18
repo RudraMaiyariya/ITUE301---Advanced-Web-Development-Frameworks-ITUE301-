@@ -1,0 +1,61 @@
+name: CI/CD Pipeline
+
+# Practical 12: Automated CI/CD Workflow
+# Triggers on every push to main and on pull requests targeting main (Supplementary Q2)
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # ============================================================
+  # Job 1: Lint & Code Style Check (Supplementary Problem 1)
+  # ============================================================
+  lint:
+    name: 🔍 Lint & Syntax Verification
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install Dependencies
+        working-directory: 'lab/Practical 12/task-manager-api-d25dit081'
+        run: npm install
+
+      - name: Verify Backend Code Syntax
+        working-directory: 'lab/Practical 12/task-manager-api-d25dit081'
+        run: node --check server.js cache.js events.js listeners.js
+
+  # ============================================================
+  # Job 2: Build & Automated Tests (Main Problem)
+  # ============================================================
+  build-and-test:
+    name: 🧪 Automated Testing & Production Build
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install Dependencies (npm install step)
+        working-directory: 'lab/Practical 12/task-manager-api-d25dit081'
+        run: npm install
+
+      - name: Run Automated Test Suite
+        working-directory: 'lab/Practical 12/task-manager-api-d25dit081'
+        run: npm test
+
+      - name: Build Frontend Production Artifacts
+        working-directory: 'lab/Practical 12/task-manager-api-d25dit081'
+        run: npm run build

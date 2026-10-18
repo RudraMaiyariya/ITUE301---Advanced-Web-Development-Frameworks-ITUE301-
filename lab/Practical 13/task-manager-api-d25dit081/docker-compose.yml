@@ -1,0 +1,63 @@
+services:
+  # ============================================================
+  # 1. MongoDB Database Service
+  # ============================================================
+  mongodb:
+    image: mongo:latest
+    container_name: task-manager-mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      # Supplementary Problem 3: Named volume ensuring data persists across container restarts
+      - mongo_data:/data/db
+    networks:
+      - app-network
+
+  # ============================================================
+  # 2. Node.js / Express Backend API Service
+  # ============================================================
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: task-manager-backend
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - MONGO_URI=mongodb://mongodb:27017/task-manager-api
+      - JWT_SECRET=awdf_practical11_jwt_secret_key_d25dit081
+    depends_on:
+      - mongodb
+    networks:
+      - app-network
+
+  # ============================================================
+  # 3. React Frontend Service (Multi-Stage Build)
+  # ============================================================
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: task-manager-frontend
+    restart: always
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://localhost:5000
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+# Supplementary Problem 3: Persistent Named Volume for MongoDB Data
+volumes:
+  mongo_data:
+    driver: local
+
+# Internal Bridge Network for Secure Service-to-Service Communication
+networks:
+  app-network:
+    driver: bridge
