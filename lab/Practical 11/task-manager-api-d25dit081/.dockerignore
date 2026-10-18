@@ -1,0 +1,16 @@
+# Practical 11: .dockerignore (Supplementary Problem 1)
+# Excludes heavy local dependencies, build caches, and sensitive environment secrets
+
+node_modules
+npm-debug.log
+yarn-error.log
+dist
+dist-ssr
+.env
+.env.local
+.git
+.gitignore
+.vscode
+.idea
+.DS_Store
+*.md
