@@ -89,8 +89,8 @@ mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/task-manage
    AUTHENTICATION ENDPOINTS
    ========================================================================== */
 
-// 1. User Registration
-app.post('/auth/register', validateRegister, async (req, res, next) => {
+// 1. User Registration Handler
+const handleRegister = async (req, res, next) => {
     try {
         const { name, email, password } = req.body;
 
@@ -130,10 +130,13 @@ app.post('/auth/register', validateRegister, async (req, res, next) => {
     } catch (err) {
         next(err);
     }
-});
+};
 
-// 2. User Login
-app.post('/auth/login', validateLogin, async (req, res, next) => {
+app.post('/auth/register', validateRegister, handleRegister);
+app.post('/register', validateRegister, handleRegister);
+
+// 2. User Login Handler
+const handleLogin = async (req, res, next) => {
     try {
         const { email, password } = req.body;
 
@@ -172,7 +175,11 @@ app.post('/auth/login', validateLogin, async (req, res, next) => {
     } catch (err) {
         next(err);
     }
-});
+};
+
+app.post('/auth/login', validateLogin, handleLogin);
+app.post('/login', validateLogin, handleLogin);
+
 
 // 3. Current User Profile (/me)
 app.get('/me', authMiddleware, async (req, res, next) => {
