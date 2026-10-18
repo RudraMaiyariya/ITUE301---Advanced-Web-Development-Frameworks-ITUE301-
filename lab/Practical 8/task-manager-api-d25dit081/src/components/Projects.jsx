@@ -1,7 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { getTasks, createTask, updateTask, deleteTask, loginUser, registerUser, getMe } from '../services/api';
 import Toast from './Toast';
 import ConfirmModal from './ConfirmModal';
+
+// Supplementary Problem 1: Lazy loading a heavy component only when required
+const TaskAnalyticsChart = lazy(() => import('./TaskAnalyticsChart'));
 
 const Spinner = () => (
     <div style={{ textAlign: 'center', padding: '40px 20px' }}>
@@ -80,6 +83,9 @@ function Projects() {
 
     // Filter: 'all' | 'pending' | 'completed'
     const [filter, setFilter] = useState('all');
+
+    // Supplementary Problem 1: Toggle lazy analytics
+    const [showAnalytics, setShowAnalytics] = useState(false);
 
     // Editing State
     const [editingTask, setEditingTask] = useState(null);
@@ -513,14 +519,54 @@ function Projects() {
                         </form>
                     </div>
 
-                    {/* Filter Tabs */}
+                    {/* Supplementary Problem 1: Lazy Loaded Chart */}
+                    {showAnalytics && (
+                        <Suspense fallback={
+                            <div style={{
+                                padding: '20px',
+                                textAlign: 'center',
+                                color: '#93c5fd',
+                                background: '#1e293b',
+                                borderRadius: '8px',
+                                border: '1px solid #3b82f633',
+                                marginBottom: '20px'
+                            }}>
+                                ⏳ Loading Analytics Chart chunk on demand...
+                            </div>
+                        }>
+                            <TaskAnalyticsChart tasks={tasks} />
+                        </Suspense>
+                    )}
+
+                    {/* Filter Tabs & Analytics Toggle */}
                     <div style={{
                         display: 'flex',
+                        alignItems: 'center',
                         gap: '8px',
                         marginBottom: '16px',
                         borderBottom: '1px solid #27272a',
                         paddingBottom: '12px'
                     }}>
+                        <button
+                            type="button"
+                            onClick={() => setShowAnalytics(prev => !prev)}
+                            style={{
+                                padding: '5px 12px',
+                                borderRadius: '6px',
+                                fontSize: '12px',
+                                fontWeight: '500',
+                                border: '1px solid #3b82f6',
+                                backgroundColor: showAnalytics ? '#2563eb' : '#1e293b',
+                                color: showAnalytics ? '#ffffff' : '#60a5fa',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '6px',
+                                marginRight: '8px'
+                            }}
+                        >
+                            <span>📊</span> {showAnalytics ? 'Hide Analytics' : 'Show Analytics (Lazy Loaded)'}
+                        </button>
                         <button
                             type="button"
                             onClick={() => setFilter('all')}

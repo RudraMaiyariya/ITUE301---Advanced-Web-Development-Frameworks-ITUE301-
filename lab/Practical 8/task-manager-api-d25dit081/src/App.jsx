@@ -1,16 +1,17 @@
-import { lazy, Suspense } from "react";
+import { Suspense } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./App.css";
 
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import PageLoader from "./components/PageLoader";
+import lazyWithDelay from "./utils/lazyWithDelay";
 
-// Lazy loading route-based components (Code Splitting)
-const Home = lazy(() => import("./components/Home"));
-const Projects = lazy(() => import("./components/Projects"));
-const Contact = lazy(() => import("./components/Contact"));
-const NotFound = lazy(() => import("./pages/NotFound"));
+// Supplementary Problem 2: Route-based lazy loading with 300ms min-delay fallback to prevent flickering
+const Home = lazyWithDelay(() => import("./components/Home"), 300);
+const Projects = lazyWithDelay(() => import("./components/Projects"), 300);
+const Contact = lazyWithDelay(() => import("./components/Contact"), 300);
+const NotFound = lazyWithDelay(() => import("./pages/NotFound"), 300);
 
 function App() {
   return (
